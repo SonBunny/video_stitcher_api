@@ -4,17 +4,17 @@ from moviepy.editor import VideoFileClip, concatenate_videoclips
 from utils.drive import list_files_in_folder, download_file
 from fastapi.responses import FileResponse
 import os
+import logging
 
 app = FastAPI()
 
-FOLDER_ID="1522x_bLGrJn5CjlCeMYuqNvRJU7xR7mg"
+FOLDER_ID = "1522x_bLGrJn5CjlCeMYuqNvRJU7xR7mg"
 
 # Health check endpoint
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
 
-# Your existing implementation
 class IngredientsRequest(BaseModel):
     ingredients: list[str]
 
@@ -27,18 +27,27 @@ def generate_video(request: IngredientsRequest):
         for file in files:
             if ingredient.lower() in file['name'].lower():
                 path = download_file(file['id'], file['name'])
-                matched_videos.append(path)
-                break
+
+                try:
+                    clip = VideoFileClip(path)
+                    matched_videos.append(clip)
+                    break
+                except Exception as e:
+                    logging.warning(f"Skipping invalid video '{file['name']}': {e}")
+                    continue
 
     if not matched_videos:
-        return {"error": "No matching videos found"}
+        return {"error": "No valid matching videos found"}
 
-    clips = [VideoFileClip(path) for path in matched_videos]
-    final_clip = concatenate_videoclips(clips, method="compose")
-
+    final_clip = concatenate_videoclips(matched_videos, method="compose")
+    
     output_path = "videos/output_video.mp4"
     os.makedirs("videos", exist_ok=True)
     final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
+
+    # Cleanup
+    for clip in matched_videos:
+        clip.close()
 
     return {"message": "Video created", "video_url": "/video"}
 
