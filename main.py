@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from moviepy.editor import VideoFileClip, concatenate_videoclips
-from drive_utils import list_files_in_folder, download_file
+
+from utils.drive import list_files_in_folder, download_file
 from fastapi.responses import FileResponse
 import os
 
