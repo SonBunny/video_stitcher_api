@@ -1,16 +1,18 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from moviepy.editor import VideoFileClip, concatenate_videoclips
-
 from utils.drive import list_files_in_folder, download_file
 from fastapi.responses import FileResponse
 import os
 
 app = FastAPI()
 
-# Replace this with your actual Google Drive folder ID
-FOLDER_ID = "1522x_bLGrJn5CjlCeMYuqNvRJU7xR7mg"
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
 
+# Your existing implementation
 class IngredientsRequest(BaseModel):
     ingredients: list[str]
 
@@ -33,10 +35,13 @@ def generate_video(request: IngredientsRequest):
     final_clip = concatenate_videoclips(clips, method="compose")
 
     output_path = "videos/output_video.mp4"
+    os.makedirs("videos", exist_ok=True)
     final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
 
     return {"message": "Video created", "video_url": "/video"}
 
 @app.get("/video")
 def get_video():
+    if not os.path.exists("videos/output_video.mp4"):
+        return {"error": "Video not found"}, 404
     return FileResponse("videos/output_video.mp4", media_type="video/mp4")
