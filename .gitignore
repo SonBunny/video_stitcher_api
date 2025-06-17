@@ -1,42 +1,55 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.python-version
+venv/
+.env/
+.env.local
+.env.prod
 
-# dependencies
-node_modules/
+# Virtual Environment (Windows/Mac/Linux)
+venv/
+env/
+ENV/
+.venv/
 
-# Expo
-.expo/
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# Build & Deployment
 dist/
-web-build/
-expo-env.d.ts
+build/
+*.exe
+*.msi
+*.spec
+.coverage
+htmlcov/
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# Media & Output Files
+*.mp4
+*.avi
+*.mov
+output/
+temp/
+*.jpg
+*.png
 
-# Metro
-.metro-health-check*
+# Google Drive Credentials
+credentials.json
+*.json
+token.pickle
 
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
+# Railway & Deployment
+.railway/
+*.railway
+.env.railway
 
-# macOS
+# System Files
 .DS_Store
-*.pem
-
-# local env files
-.env*.local
-.env
-
-# typescript
-*.tsbuildinfo
-
-app-example
-
-service_account.json
+Thumbs.db
